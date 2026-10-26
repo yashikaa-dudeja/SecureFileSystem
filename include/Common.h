@@ -4,9 +4,8 @@
 #include <string>
 #include <algorithm>
 
-/**
- * @brief Represents the four capability-controlled operations in the system.
- */
+//Represents the four capability-controlled operations in the system.
+
 enum class OperationType {
     READ,
     WRITE,
@@ -14,17 +13,13 @@ enum class OperationType {
     EXECUTE
 };
 
-/**
- * @brief Represents the outcome of an access control decision.
- */
+//Represents the outcome of an access control decision.
 enum class AccessResult {
     ALLOWED,
     DENIED
 };
 
-/**
- * @brief Convert OperationType enum to human-readable string.
- */
+// Convert OperationType enum to human-readable string.
 inline std::string operationToString(OperationType op) {
     switch (op) {
         case OperationType::READ:    return "READ";
@@ -35,10 +30,8 @@ inline std::string operationToString(OperationType op) {
     }
 }
 
-/**
- * @brief Convert human-readable string to OperationType enum.
- * @return true if valid operation, false otherwise.
- */
+// Convert human-readable string to OperationType enum.
+
 inline bool stringToOperation(std::string str, OperationType& op) {
     std::transform(str.begin(), str.end(), str.begin(), ::toupper);
     if (str == "READ" || str == "R") {
@@ -57,9 +50,8 @@ inline bool stringToOperation(std::string str, OperationType& op) {
     return false;
 }
 
-/**
- * @brief Convert AccessResult enum to string.
- */
+//Convert AccessResult enum to string.
+ 
 inline std::string accessResultToString(AccessResult res) {
     switch (res) {
         case AccessResult::ALLOWED: return "ALLOWED";
@@ -68,4 +60,4 @@ inline std::string accessResultToString(AccessResult res) {
     }
 }
 
-#endif // COMMON_H
+#endif 

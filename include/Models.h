@@ -8,9 +8,8 @@
 #include <sstream>
 #include "Common.h"
 
-/**
- * @brief Helper function to get current timestamp formatted as string.
- */
+//to get current timestamp formatted as string.
+
 inline std::string getCurrentTimestamp() {
     auto now = std::chrono::system_clock::now();
     std::time_t now_time = std::chrono::system_clock::to_time_t(now);
@@ -25,9 +24,8 @@ inline std::string getCurrentTimestamp() {
     return oss.str();
 }
 
-/**
- * @brief Represents a simulated OS process.
- */
+//Represents a simulated OS process.
+
 struct Process {
     int pid;
     std::string name;
@@ -38,10 +36,8 @@ struct Process {
         : pid(p), name(n), creationTime(getCurrentTimestamp()) {}
 };
 
-/**
- * @brief Represents a Capability: (PID + Resource + Allowed Operation).
- * In capability-based security, holding the capability is ticket to access.
- */
+//Represents a Capability: (PID + Resource + Allowed Operation).
+
 struct Capability {
     int pid;
     std::string resourcePath;
@@ -58,9 +54,8 @@ struct Capability {
     }
 };
 
-/**
- * @brief Represents an audit log entry recording every access decision.
- */
+//Represents an audit log entry recording every access decision.
+
 struct AuditEntry {
     int id;
     std::string timestamp;
@@ -82,4 +77,4 @@ struct AuditEntry {
           operation(op), resourcePath(res), result(resStatus), details(det) {}
 };
 
-#endif // MODELS_H
+#endif 

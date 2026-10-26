@@ -46,9 +46,7 @@ static int failedTests = 0;
         std::cout << "PASSED\n"; \
     } while(0)
 
-// -------------------------------------------------------------
 // 1. Process Manager Tests
-// -------------------------------------------------------------
 void testProcessCreation() {
     TEST_CASE("Process creation and basic attributes");
     ProcessManager pm(101);
@@ -86,9 +84,7 @@ void testInvalidPIDHandling() {
     TEST_PASS();
 }
 
-// -------------------------------------------------------------
 // 2. Virtual File System Tests
-// -------------------------------------------------------------
 void testVFSFileCreationAndReadWrite() {
     TEST_CASE("VFS file creation, reading, and writing");
     VirtualFileSystem vfs;
@@ -138,9 +134,7 @@ void testVFSResourceDeletion() {
     TEST_PASS();
 }
 
-// -------------------------------------------------------------
 // 3. Capability Manager Tests
-// -------------------------------------------------------------
 void testCapabilityGrantAndCheck() {
     TEST_CASE("CapabilityManager grant, query, and process-specific isolation");
     CapabilityManager cm;
@@ -152,7 +146,7 @@ void testCapabilityGrantAndCheck() {
     ASSERT_TRUE(cm.hasCapability(101, "/data/file.txt", OperationType::WRITE), "Process 101 must have WRITE");
     ASSERT_FALSE(cm.hasCapability(101, "/data/file.txt", OperationType::DELETE), "Process 101 must NOT have DELETE");
 
-    // Process 102 must have NO capabilities on this file
+    
     ASSERT_FALSE(cm.hasCapability(102, "/data/file.txt", OperationType::READ), "Process 102 must NOT have READ");
     ASSERT_FALSE(cm.hasCapability(102, "/data/file.txt", OperationType::WRITE), "Process 102 must NOT have WRITE");
     TEST_PASS();
@@ -183,10 +177,7 @@ void testCapabilityRevocation() {
     ASSERT_FALSE(cm.revokeCapability(999, "/data/file.txt", OperationType::READ, &err), "Revoking from absent process fails");
     TEST_PASS();
 }
-
-// -------------------------------------------------------------
 // 4. Access Controller & Operations Tests
-// -------------------------------------------------------------
 void testAuthorizedAndUnauthorizedRead() {
     TEST_CASE("AccessController: Authorized READ vs Unauthorized READ");
     ProcessManager pm(101);
@@ -308,9 +299,7 @@ void testAuthorizedAndUnauthorizedExecute() {
     TEST_PASS();
 }
 
-// -------------------------------------------------------------
 // 5. Complete Capability Revocation Lifecycle Test
-// -------------------------------------------------------------
 void testRevocationLifecycle() {
     TEST_CASE("Crucial Requirement: Access allowed -> revoke capability -> access denied");
     ProcessManager pm(101);
@@ -341,9 +330,7 @@ void testRevocationLifecycle() {
     TEST_PASS();
 }
 
-// -------------------------------------------------------------
 // 6. Principle of Least Privilege and Multi-Process Isolation
-// -------------------------------------------------------------
 void testLeastPrivilegeAndIsolation() {
     TEST_CASE("Principle of Least Privilege and multi-process isolation");
     ProcessManager pm(101);
@@ -378,9 +365,7 @@ void testLeastPrivilegeAndIsolation() {
     TEST_PASS();
 }
 
-// -------------------------------------------------------------
 // 7. Audit Logging Verification
-// -------------------------------------------------------------
 void testAuditLogging() {
     TEST_CASE("AuditLogger captures both ALLOWED and DENIED events with timestamps and details");
     ProcessManager pm(101);
@@ -417,9 +402,7 @@ void testAuditLogging() {
     TEST_PASS();
 }
 
-// -------------------------------------------------------------
 // 8. Error and Edge Case Handling
-// -------------------------------------------------------------
 void testEdgeCasesAndValidation() {
     TEST_CASE("Edge case validation (non-existent process, non-existent resource, invalid operation)");
     ProcessManager pm(101);

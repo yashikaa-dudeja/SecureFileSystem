@@ -10,19 +10,19 @@ AccessResponse AccessController::requestRead(int pid, const std::string& rawPath
     const Process* proc = processMgr.getProcess(pid);
     std::string procName = proc ? proc->name : "Unknown";
 
-    // 1. Process validation
+    //Process validation
     if (!proc) {
         logger.log(pid, procName, OperationType::READ, path, AccessResult::DENIED, "Invalid PID: Process not found");
         return AccessResponse(false, AccessResult::DENIED, "Error: Process with PID " + std::to_string(pid) + " does not exist.");
     }
 
-    // 2. Resource existence validation
+    //Resource existence validation
     if (!vfs.exists(path)) {
         logger.log(pid, procName, OperationType::READ, path, AccessResult::DENIED, "Resource does not exist");
         return AccessResponse(false, AccessResult::DENIED, "Error: Resource '" + path + "' does not exist.");
     }
 
-    // 3. Capability verification (Central Reference Monitor)
+    //Capability verification
     if (!capMgr.hasCapability(pid, path, OperationType::READ)) {
         logger.log(pid, procName, OperationType::READ, path, AccessResult::DENIED, "READ capability not possessed");
         return AccessResponse(false, AccessResult::DENIED,
@@ -30,7 +30,7 @@ AccessResponse AccessController::requestRead(int pid, const std::string& rawPath
             ") does not have READ capability for '" + path + "'.");
     }
 
-    // 4. Authorized execution
+    //Authorized execution
     if (vfs.isDirectory(path)) {
         auto items = vfs.listDirectory(path);
         std::string listing = "Directory contents of " + path + ":\n";
@@ -55,25 +55,25 @@ AccessResponse AccessController::requestWrite(int pid, const std::string& rawPat
     const Process* proc = processMgr.getProcess(pid);
     std::string procName = proc ? proc->name : "Unknown";
 
-    // 1. Process validation
+    //Process validation
     if (!proc) {
         logger.log(pid, procName, OperationType::WRITE, path, AccessResult::DENIED, "Invalid PID: Process not found");
         return AccessResponse(false, AccessResult::DENIED, "Error: Process with PID " + std::to_string(pid) + " does not exist.");
     }
 
-    // 2. Resource existence validation
+    //Resource existence validation
     if (!vfs.exists(path)) {
         logger.log(pid, procName, OperationType::WRITE, path, AccessResult::DENIED, "Resource does not exist");
         return AccessResponse(false, AccessResult::DENIED, "Error: Resource '" + path + "' does not exist.");
     }
 
-    // 3. Cannot write text directly into a directory node
+    //Cannot write text directly into a directory node
     if (vfs.isDirectory(path)) {
         logger.log(pid, procName, OperationType::WRITE, path, AccessResult::DENIED, "Cannot write data to directory node");
         return AccessResponse(false, AccessResult::DENIED, "Error: Resource '" + path + "' is a directory, not a file.");
     }
 
-    // 4. Capability verification (Central Reference Monitor)
+    //Capability verification
     if (!capMgr.hasCapability(pid, path, OperationType::WRITE)) {
         logger.log(pid, procName, OperationType::WRITE, path, AccessResult::DENIED, "WRITE capability not possessed");
         return AccessResponse(false, AccessResult::DENIED,
@@ -81,7 +81,7 @@ AccessResponse AccessController::requestWrite(int pid, const std::string& rawPat
             ") does not have WRITE capability for '" + path + "'.");
     }
 
-    // 5. Authorized execution
+    //Authorized execution
     vfs.writeFile(path, content);
     logger.log(pid, procName, OperationType::WRITE, path, AccessResult::ALLOWED,
         "Wrote " + std::to_string(content.size()) + " bytes");
@@ -95,13 +95,13 @@ AccessResponse AccessController::requestDelete(int pid, const std::string& rawPa
     const Process* proc = processMgr.getProcess(pid);
     std::string procName = proc ? proc->name : "Unknown";
 
-    // 1. Process validation
+    //Process validation
     if (!proc) {
         logger.log(pid, procName, OperationType::DELETE, path, AccessResult::DENIED, "Invalid PID: Process not found");
         return AccessResponse(false, AccessResult::DENIED, "Error: Process with PID " + std::to_string(pid) + " does not exist.");
     }
 
-    // 2. Resource existence validation
+    //Resource existence validation
     if (!vfs.exists(path)) {
         logger.log(pid, procName, OperationType::DELETE, path, AccessResult::DENIED, "Resource does not exist");
         return AccessResponse(false, AccessResult::DENIED, "Error: Resource '" + path + "' does not exist.");
@@ -112,7 +112,7 @@ AccessResponse AccessController::requestDelete(int pid, const std::string& rawPa
         return AccessResponse(false, AccessResult::DENIED, "Error: Cannot delete root directory '/'.");
     }
 
-    // 3. Capability verification (Central Reference Monitor)
+    //Capability verification
     if (!capMgr.hasCapability(pid, path, OperationType::DELETE)) {
         logger.log(pid, procName, OperationType::DELETE, path, AccessResult::DENIED, "DELETE capability not possessed");
         return AccessResponse(false, AccessResult::DENIED,
@@ -120,7 +120,7 @@ AccessResponse AccessController::requestDelete(int pid, const std::string& rawPa
             ") does not have DELETE capability for '" + path + "'.");
     }
 
-    // 4. Authorized execution
+    //Authorized execution
     vfs.deleteResource(path);
     // Cleanup any lingering capabilities for this resource
     capMgr.removeCapabilitiesForResource(path);
@@ -135,19 +135,19 @@ AccessResponse AccessController::requestExecute(int pid, const std::string& rawP
     const Process* proc = processMgr.getProcess(pid);
     std::string procName = proc ? proc->name : "Unknown";
 
-    // 1. Process validation
+    //Process validation
     if (!proc) {
         logger.log(pid, procName, OperationType::EXECUTE, path, AccessResult::DENIED, "Invalid PID: Process not found");
         return AccessResponse(false, AccessResult::DENIED, "Error: Process with PID " + std::to_string(pid) + " does not exist.");
     }
 
-    // 2. Resource existence validation
+    //Resource existence validation
     if (!vfs.exists(path)) {
         logger.log(pid, procName, OperationType::EXECUTE, path, AccessResult::DENIED, "Resource does not exist");
         return AccessResponse(false, AccessResult::DENIED, "Error: Resource '" + path + "' does not exist.");
     }
 
-    // 3. Capability verification (Central Reference Monitor)
+    //Capability verification 
     if (!capMgr.hasCapability(pid, path, OperationType::EXECUTE)) {
         logger.log(pid, procName, OperationType::EXECUTE, path, AccessResult::DENIED, "EXECUTE capability not possessed");
         return AccessResponse(false, AccessResult::DENIED,
@@ -155,7 +155,7 @@ AccessResponse AccessController::requestExecute(int pid, const std::string& rawP
             ") does not have EXECUTE capability for '" + path + "'.");
     }
 
-    // 4. Safe virtual resource execution simulation
+    //Safe virtual resource execution simulation
     logger.log(pid, procName, OperationType::EXECUTE, path, AccessResult::ALLOWED,
         "Simulated virtual execution successful");
     return AccessResponse(true, AccessResult::ALLOWED,

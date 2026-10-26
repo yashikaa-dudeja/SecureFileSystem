@@ -48,9 +48,7 @@ void runDemonstration(AccessController& controller) {
     cm.clear();
     logger.clear();
 
-    // -------------------------------------------------------------
     // Step 1: Create Processes
-    // -------------------------------------------------------------
     std::cout << "[Step 1] Creating Simulated Processes...\n";
     int pidReader = pm.createProcess("ReaderProcess");
     int pidWriter = pm.createProcess("WriterProcess");
@@ -60,9 +58,7 @@ void runDemonstration(AccessController& controller) {
     std::cout << "  - Process Created: PID " << pidWriter << " (WriterProcess)\n";
     std::cout << "  - Process Created: PID " << pidRestricted << " (RestrictedProcess)\n\n";
 
-    // -------------------------------------------------------------
     // Step 2: Create Virtual File System Resources
-    // -------------------------------------------------------------
     std::cout << "[Step 2] Initializing Virtual File System Resources...\n";
     vfs.createDirectory("/documents");
     vfs.createDirectory("/bin");
@@ -74,9 +70,7 @@ void runDemonstration(AccessController& controller) {
     std::cout << "  - Virtual File Created: /documents/report.txt\n";
     std::cout << "  - Virtual Executable Created: /bin/backup_daemon.bin\n\n";
 
-    // -------------------------------------------------------------
     // Step 3: Grant Initial Capabilities (Least Privilege)
-    // -------------------------------------------------------------
     std::cout << "[Step 3] Granting Capabilities (Enforcing Principle of Least Privilege)...\n";
     std::string msg;
     controller.grantCapability(pidReader, "/documents/report.txt", OperationType::READ, msg);
@@ -89,18 +83,14 @@ void runDemonstration(AccessController& controller) {
     std::cout << "  " << msg << "\n";
     std::cout << "  * Notice: Process " << pidRestricted << " has NOT been granted any capabilities.\n\n";
 
-    // -------------------------------------------------------------
     // Step 4: Authorized READ
-    // -------------------------------------------------------------
     std::cout << "[Step 4] Process " << pidReader << " requests READ on '/documents/report.txt'...\n";
     AccessResponse resp = controller.requestRead(pidReader, "/documents/report.txt");
     std::cout << "  Decision: " << (resp.decision == AccessResult::ALLOWED ? "ALLOWED" : "DENIED") << "\n";
     std::cout << "  Status Message: " << resp.message << "\n";
     std::cout << "  File Content: \"" << resp.data << "\"\n\n";
 
-    // -------------------------------------------------------------
     // Step 5: Unauthorized Access Attempts
-    // -------------------------------------------------------------
     std::cout << "[Step 5] Testing Unauthorized Operations (Process-Level Isolation)...\n";
     std::cout << "  (A) Process " << pidReader << " attempts unauthorized WRITE on '/documents/report.txt'...\n";
     resp = controller.requestWrite(pidReader, "/documents/report.txt", "Hacked Content!");
@@ -112,9 +102,7 @@ void runDemonstration(AccessController& controller) {
     std::cout << "      Decision: " << (resp.decision == AccessResult::ALLOWED ? "ALLOWED" : "DENIED") << "\n";
     std::cout << "      Status Message: " << resp.message << "\n\n";
 
-    // -------------------------------------------------------------
     // Step 6: Dynamic Capability Grant & Verification
-    // -------------------------------------------------------------
     std::cout << "[Step 6] Dynamic Capability Grant...\n";
     std::cout << "  Granting WRITE capability on '/documents/report.txt' to Process " << pidReader << "...\n";
     controller.grantCapability(pidReader, "/documents/report.txt", OperationType::WRITE, msg);
@@ -125,9 +113,7 @@ void runDemonstration(AccessController& controller) {
     std::cout << "  Decision: " << (resp.decision == AccessResult::ALLOWED ? "ALLOWED" : "DENIED") << "\n";
     std::cout << "  Status Message: " << resp.message << "\n\n";
 
-    // -------------------------------------------------------------
     // Step 7: Dynamic Capability Revocation & Immediate Denial
-    // -------------------------------------------------------------
     std::cout << "[Step 7] Dynamic Capability Revocation (Crucial OS Demonstration)...\n";
     std::cout << "  Revoking WRITE capability on '/documents/report.txt' from Process " << pidReader << "...\n";
     controller.revokeCapability(pidReader, "/documents/report.txt", OperationType::WRITE, msg);
@@ -139,9 +125,7 @@ void runDemonstration(AccessController& controller) {
     std::cout << "  Status Message: " << resp.message << "\n";
     std::cout << "  * Confirmation: Access allowed before revocation -> revoked -> access immediately denied!\n\n";
 
-    // -------------------------------------------------------------
     // Step 8: Safe EXECUTE Operation
-    // -------------------------------------------------------------
     std::cout << "[Step 8] Safe Virtual Resource Execution Demonstration...\n";
     std::cout << "  (A) Process " << pidReader << " requests EXECUTE on '/bin/backup_daemon.bin'...\n";
     resp = controller.requestExecute(pidReader, "/bin/backup_daemon.bin");
@@ -153,9 +137,7 @@ void runDemonstration(AccessController& controller) {
     std::cout << "      Decision: " << (resp.decision == AccessResult::ALLOWED ? "ALLOWED" : "DENIED") << "\n";
     std::cout << "      Status Message: " << resp.message << "\n\n";
 
-    // -------------------------------------------------------------
     // Step 9: Audit Trail Inspection
-    // -------------------------------------------------------------
     std::cout << "[Step 9] Security Audit Log Trail Review...\n";
     logger.displayLogs();
 
@@ -171,7 +153,6 @@ int main(int argc, char* argv[]) {
     AuditLogger logger;
     AccessController controller(processMgr, vfs, capMgr, logger);
 
-    // If --demo flag provided, run demo and exit
     if (argc > 1 && std::string(argv[1]) == "--demo") {
         runDemonstration(controller);
         return 0;
